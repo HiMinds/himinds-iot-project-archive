@@ -1,0 +1,24 @@
+{
+  "name": "himinds-iot-project-cloud-secure-websocket-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "ws": "^5.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-server.git"
+  },
+  "author": "Suru Dissanaike",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-server/issues"
+  },
+  "homepage": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-server#readme"
+}
