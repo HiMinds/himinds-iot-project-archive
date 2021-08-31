@@ -1,0 +1,35 @@
+author: HiMinds.com
+description:  Test application for interrupt performance in JavaScript
+version: 0.1
+
+libs_version: ${mos.version}
+modules_version: ${mos.version}
+mongoose_os_version: ${mos.version}
+
+# Optional. List of tags for online search.
+tags:
+  - mqtt
+  - c
+  - js
+  - net
+
+# List of files / directories with C sources. No slashes at the end of dir names.
+sources:
+  - src
+
+# List of dirs. Files from these dirs will be copied to the device filesystem
+filesystem:
+  - fs
+
+build_vars:
+  ESP_IDF_SDKCONFIG_OPTS: "${build_vars.ESP_IDF_SDKCONFIG_OPTS} CONFIG_BROWNOUT_DET= CONFIG_TASK_WDT= CONFIG_INT_WDT_CHECK_CPU1= CONFIG_TASK_WDT_CHECK_IDLE_TASK_CPU1= CONFIG_FREERTOS_UNICORE= CONFIG_ESP32_DEFAULT_CPU_FREQ_240=y CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ=240 CONFIG_FREERTOS_USE_TRACE_FACILITY=y CONFIG_FREERTOS_USE_STATS_FORMATTING_FUNCTIONS=y CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y CONFIG_FREERTOS_VTASKLIST_INCLUDE_COREID=y CONFIG_MBEDTLS_HARDWARE_MPI=y"
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/core
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/rpc-service-gpio
+  - origin: https://github.com/mongoose-os-libs/mjs
+
+# Used by the mos tool to catch mos binaries incompatible with this file format
+manifest_version: 2017-09-29

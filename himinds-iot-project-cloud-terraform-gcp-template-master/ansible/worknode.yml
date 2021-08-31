@@ -1,0 +1,60 @@
+---
+
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+    - name: check that terraform is installed
+      stat: path=/usr/local/bin/terraform
+      register: terraform_installed
+      
+    - name: install dependency packages
+      apt:
+        name: unzip
+        state: present
+      
+    - name: get if terraform is not installed
+      command: bash -c 'wget https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip'
+      when: terraform_installed.stat.exists == False
+
+    - name: unzip terraform
+      command: bash -c 'unzip terraform_0.11.8_linux_amd64.zip'
+      when: terraform_installed.stat.exists == False
+      
+    - name: move terraform to the right location
+      command: bash -c 'mv terraform /usr/local/bin/'
+      when: terraform_installed.stat.exists == False
+      
+    - name: test terraform
+      command: bash -c 'terraform --version'
+
+    - name: capture output of a command line
+      command: lsb_release -c -s
+      register: release
+    - debug: var=release
+
+    - name: create the cloud sdk repo version
+      command: echo cloud-sdk-{{release.stdout}}
+      register: cloud_sdk_repo
+    - debug: var=cloud_sdk_repo
+    
+    - name: add the google repository
+      apt_repository:
+        filename: google-cloud-sdk
+        repo: deb http://packages.cloud.google.com/apt {{cloud_sdk_repo.stdout}} main
+        state: present
+        validate_certs: yes
+    
+    - name: add key to the repository
+      apt_key:
+        url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+        state: present
+        
+    - name: Update repositories cache and install google-cloud-sdk package
+      apt:
+        name: google-cloud-sdk
+        update_cache: yes
+
+    - name: test the google cloud sdk install
+      command: bash -c 'gcloud --version'

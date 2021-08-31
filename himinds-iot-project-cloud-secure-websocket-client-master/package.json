@@ -1,0 +1,22 @@
+{
+  "name": "himinds-iot-project-cloud-secure-websocket-client",
+  "version": "0.1.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-client.git"
+  },
+  "author": "Suru Dissanaike",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-client/issues"
+  },
+  "homepage": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-websocket-client#readme",
+  "dependencies": {
+    "ws": "^5.2.0"
+  }
+}

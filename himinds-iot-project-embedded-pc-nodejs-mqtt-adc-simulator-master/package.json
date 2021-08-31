@@ -1,0 +1,14 @@
+{
+  "name": "himinds-iot-project-embedded-pc-nodejs-mqtt-adc-simulator",
+  "version": "0.1.0",
+  "description": "NodeJS application that simulates a sine wave and outputs it as a 12-bit ADC value",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Suru Dissanaike <suru.dissanaike@himinds.com> (http://www.himinds.com)",
+  "license": "GPL-2.0-only",
+  "dependencies": {
+    "mqtt": "^2.18.8"
+  }
+}

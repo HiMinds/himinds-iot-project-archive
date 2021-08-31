@@ -1,0 +1,17 @@
+{
+  "name": "himinds-iot-project-embedded-raspberrypi-nodejs-smart-ble-button",
+  "version": "1.0.0",
+  "description": "NodeJS application that listens to PuckJS messages and sends them to GCP, IoT Core.",
+  "main": "puckjs-mqtt-bridge.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Suru Dissanaike <suru.dissanaike@himinds.com> (http://www.himinds.com)",
+  "license": "MIT",
+  "dependencies": {
+    "mqtt": "^2.18.8",
+    "noble": "1.9.1",
+    "jsonwebtoken": "8.4.0",
+    "time-stamp":"2.2.0"
+  }
+}

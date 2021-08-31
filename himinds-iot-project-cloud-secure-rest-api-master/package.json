@@ -1,0 +1,24 @@
+{
+  "name": "himinds-iot-project-cloud-secure-rest-api",
+  "version": "0.1.0",
+  "description": "Secure REST-API example",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HiMinds/himinds-iot-project-cloud-secure-rest-api.git"
+  },
+  "author": "Suru Dissanaike",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-rest-api/issues"
+  },
+  "homepage": "https://github.com/HiMinds/himinds-iot-project-cloud-secure-rest-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "https": "^1.0.0"
+  }
+}

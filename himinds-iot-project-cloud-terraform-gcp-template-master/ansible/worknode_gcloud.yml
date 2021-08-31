@@ -1,0 +1,120 @@
+---
+
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  vars:
+      project: my-project
+      auth_kind: serviceaccount
+      service_account_file: /home/my_account.json
+      zone: "europe-west1-b"
+      region: "europe-west1"
+  tasks:
+    - name: test the google cloud sdk install
+      command: bash -c 'gcloud --version'
+
+    - name: get the username running the deploy
+      command: bash -c 'whoami'
+      register: username
+
+    - name: add environmental_variables TF_ADMIN
+      lineinfile:
+        path: /home/{{username.stdout}}/.profile
+        line: 'export TF_ADMIN=${USER}-terraform-admin'
+
+    - name: export variable TF_ADMIN
+      command: bash -c 'export TF_ADMIN=${USER}-terraform-admin' 
+
+    - name: add environmental_variables TF_CREDS
+      lineinfile:
+        path: /home/{{username.stdout}}/.profile
+        line: 'export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json'
+
+    - name: export variable TF_CREDS
+      command: bash -c 'export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json' 
+        
+    - name: add environmental_variables GOOGLE_APPLICATION_CREDENTIALS
+      lineinfile:
+        path: /home/{{username.stdout}}/.profile
+        line: 'export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}'
+        
+    - name: export variable GOOGLE_APPLICATION
+      command: bash -c 'export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}' 
+
+    - name: add environmental_variables GOOGLE_PROJECT
+      lineinfile:
+        path: /home/{{username.stdout}}/.profile
+        line: 'export GOOGLE_PROJECT=${TF_ADMIN}'
+
+    - name: export variable GOOGLE_PROJECT
+      command: bash -c 'export GOOGLE_PROJECT=${TF_ADMIN}' 
+
+    - name: check does project exists
+      command: bash -c 'gcloud projects describe ${TF_ADMIN}'
+      
+    - name: capture output of the command line
+      command: 'gcloud projects describe ${TF_ADMIN}'
+      register: project
+
+    - name: create project
+      command: bash -c 'gcloud projects create ${TF_ADMIN} --set-as-default'	  
+      when: project.stdout == ""
+
+    - name: check if the terraform admin user already exists
+      command: 'gcloud iam service-accounts describe terraform@${TF_ADMIN}.iam.gserviceaccount.com'
+      ignore_errors: yes
+      register: admin
+
+    - name: create admin account
+      command: bash -c 'gcloud iam service-accounts create terraform --display-name "Terraform admin account"'
+      when: admin.stdout == ""
+
+    - name: create authentication keys for the admin account
+      command: bash -c 'gcloud iam service-accounts keys create ${TF_CREDS} --iam-account terraform@${TF_ADMIN}.iam.gserviceaccount.com'
+
+    - name: create authentication keys for the admin account
+      command: bash -c 'gcloud projects add-iam-policy-binding ${TF_ADMIN} --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com --role roles/viewer' 
+
+    - name: create authentication keys for the admin account
+      command: bash -c 'gcloud projects add-iam-policy-binding ${TF_ADMIN} --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com --role roles/storage.admin'
+      
+    - name: enable gcloud services cloudiot.googleapis.com
+      command: bash -c 'gcloud services enable cloudiot.googleapis.com'
+
+    - name: enable gcloud services cloudbilling.googleapis.com
+      command: bash -c 'gcloud services enable cloudbilling.googleapis.com'
+
+    - name: enable gcloud services iam.googleapis.com
+      command: bash -c 'gcloud services enable iam.googleapis.com'
+
+    - name: enable gcloud services compute.googleapis.com
+      command: bash -c 'gcloud services enable compute.googleapis.com'
+
+    - name: check is the backend storage exists
+      command: 'gsutil ls'
+      ignore_errors: yes
+      register: buckets
+
+    - name: create a storage backend to store the terraform.tfstate
+      command: bash -c 'gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}'
+      when: buckets.stdout == ""
+      
+    - name: create a storage backend to store the terraform.tfstate
+      command: bash -c 'gsutil versioning set on gs://${TF_ADMIN}'
+      when: buckets.stdout == ""
+
+    - name: create the backend terraform file for the storage
+      template:
+        src: /home/{{username.stdout}}/himinds-iot-project-cloud-terraform-gcp-template/templates/backend.tf
+        dest: /home/{{username.stdout}}/himinds-iot-project-cloud-terraform-gcp-template/terraform/
+        owner: "{{username.stdout}}"
+
+    - name: create authentication key for the iot service
+      command: 'ls /home/${USER}/.ssh/rsa_private.pem'
+      register: key
+      ignore_errors: yes
+    
+    - name: create rsa_public and rsa_private
+      command: bash -c 'openssl req -x509 -newkey rsa:2048 -days 3650 -keyout /home/{{username.stdout}}/.ssh/rsa_private.pem     -nodes -out /home/{{username.stdout}}/.ssh/rsa_public.pem -subj "/CN=unused"'
+      when: key.stdout == ""
